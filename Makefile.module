@@ -1,0 +1,37 @@
+MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+BASE_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
+
+ifndef CXX
+	CXX = g++
+endif
+CXX_FLAGS += -std=c++20 -O2 -fPIC -include FC/FC.h
+
+ifndef LNK
+	LNK = g++
+endif
+LNK_FLAGS += -shared
+
+
+INCLUDE_DIRS += \
+				../Engine/
+				
+INCLUDE_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
+
+DEPS = $(patsubst %.o,%.d,$(OBJECTS))
+
+
+$(OUT): $(OBJECTS)
+	@echo Linking $(OUT)...
+	@$(LNK) $(LNK_FLAGS) $(OBJECTS) -o $(OUT)
+
+clean:
+	-rm $(OBJECTS) $(DEPS) $(OUT)
+
+-include $(DEPS)
+
+%.o: %.cpp
+	@echo Compiling $@...
+	@$(CXX) $(CXX_FLAGS) $(INCLUDE_FLAGS) -MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
+	@$(CXX) $(CXX_FLAGS) $(INCLUDE_FLAGS) -o $@ -c $<
+
+.PHONY: clean all

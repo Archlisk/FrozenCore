@@ -1,0 +1,8 @@
+
+Diffuse = "Data/Textures/PH_Block_1024.bmp";
+
+Shader = {
+	Vertex = "Data/Shaders/TestShader.vert";
+	Fragment = "Data/Shaders/TestShader.frag";
+}
+
